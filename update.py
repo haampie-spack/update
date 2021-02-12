@@ -1,5 +1,7 @@
 import re
 import os
+import random
+
 import spack.repo
 from llnl.util.filesystem import working_dir
 from spack.util.executable import Executable
@@ -16,18 +18,25 @@ def try_and_update(name):
         # todo: allow new patch versions of older minor versions
         current_max = max(pkg.versions.keys())
         keys = sorted([v for v in versions.keys() if v > current_max and is_allowed_version(v)], reverse=True)
+
         if len(keys) == 0:
             return
-        print("Considering {} for {}".format(keys, name))
+
+        print("- Considering {}".format(keys))
+
         filtered_map = {k: versions[k] for k in keys}
         result = spack.stage.get_checksums_for_versions(filtered_map, pkg.name, keep_stage=False, batch=True, fetch_options=pkg.fetch_options)
         packagedotpy = os.path.join(pkg.package_dir, "package.py")
+
         with open(packagedotpy, "r") as file:
             contents = file.read()
+
         regex = re.compile("    version\\(")
         replaced = regex.sub(result + "\n    version(", contents, 1)
+
         with open(packagedotpy, "w") as file:
             file.write(replaced)
+
         with working_dir(pkg.package_dir):
             Executable("git")("add", ".")
             Executable("git")("commit", "-m", "Add new versions of {0}".format(pkg.name))
@@ -39,7 +48,7 @@ def main(packages):
         try_and_update(pkgname)
 
 if __name__ == "__main__":
-    main([
+    list_of_packages = [
         "python",
         "py-setuptools",
         "r",
@@ -133,4 +142,9 @@ if __name__ == "__main__":
         "gmake",
         "netcdf-c",
         "bzip2"
-    ])
+    ]
+
+    # shuffle to ensure we get updates even when there's timeouts etc
+    random.shuffle(list_of_packages)
+
+    main(list_of_packages)

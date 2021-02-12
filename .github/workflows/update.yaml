@@ -20,7 +20,7 @@ jobs:
         git clone https://github.com/spack/spack.git
         cd spack
         git checkout -b some-updates
-        timeout 5m ./bin/spack python ../update.py || true
+        timeout 15m ./bin/spack python ../update.py || true
         git remote add mirror git@github.com:haampie-spack/spack.git
         git push -f mirror some-updates
       env:
