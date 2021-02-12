@@ -62,7 +62,7 @@ def try_and_update(pkg):
             Executable("git")("add", ".")
             Executable("git")("commit", "-m", "Add new versions of {0}".format(pkg.name))
     except:
-        print("Failure updating {0}".format(name))
+        print("Failure updating {0}".format(pkg))
 
 def main():
     list_of_packages = [p for p in spack.repo.path.all_packages() if p.name not in blacklisted_packages]
