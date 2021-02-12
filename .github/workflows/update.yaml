@@ -5,9 +5,10 @@ on:
   pull_request:
 
 jobs:
-  centos6:
+  update:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v2
     - name: Check for updates
       run: |
         mkdir ~/.ssh
