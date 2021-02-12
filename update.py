@@ -123,7 +123,7 @@ if __name__ == "__main__":
         "py-torch",
         "py-pandas",
         "gsl",
-        "git",
+        # "git", # git has a bit of a special structure
         "r-rlang",
         "r-magrittr",
         "libxt",
